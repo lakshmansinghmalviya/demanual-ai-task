@@ -34,7 +34,7 @@ export default function Home() {
         <div className="flex justify-center mb-6">
           <Calendar className="h-20 w-20 text-slate-700 dark:text-slate-300" />
         </div>
-        <h1 className="text-5xl font-bold mb-4">Welcome to Calendar App</h1>
+        <h1 className="text-5xl font-bold mb-4">Welcome to Calendar App Built By Lakshman Singh (SDE-1)</h1>
         <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
           Manage your events effortlessly with our intuitive calendar interface.
           Sign in to get started and never miss an important date.

@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSupabase } from '@/hooks/useSupabase';
 import { Calendar } from '@/components/Calendar';
 import { Button } from '@/components/ui/button';
 import { LogOut, Calendar as CalendarIcon } from 'lucide-react';
@@ -23,97 +22,51 @@ interface Event {
 export default function CalendarPage() {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
-  const supabase = useSupabase();
   const [events, setEvents] = useState<Event[]>([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
 
+  const storageKey = user ? `events_${user.uid}` : null;
+
+  // Redirect if not logged in
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
     }
   }, [user, loading, router]);
 
+  // Load events from localStorage
   useEffect(() => {
     if (user) {
-      fetchEvents();
+      const saved = localStorage.getItem(`events_${user.uid}`);
+      setEvents(saved ? JSON.parse(saved) : []);
+      setLoadingEvents(false);
     }
   }, [user]);
 
-  const fetchEvents = async () => {
-    if (!user || !supabase) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .eq('user_id', user.uid)
-        .order('start_date', { ascending: true });
-
-      if (error) throw error;
-
-      setEvents(data || []);
-    } catch (error) {
-      console.error('Error fetching events:', error);
-    } finally {
-      setLoadingEvents(false);
-    }
+  const saveToLocalStorage = (newEvents: Event[]) => {
+    if (!storageKey) return;
+    localStorage.setItem(storageKey, JSON.stringify(newEvents));
+    setEvents(newEvents);
   };
 
   const handleAddEvent = async (event: Omit<Event, 'id' | 'user_id'>) => {
-    if (!user || !supabase) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('events')
-        .insert([{ ...event, user_id: user.uid }])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      if (data) {
-        setEvents([...events, data]);
-      }
-    } catch (error) {
-      console.error('Error adding event:', error);
-      throw error;
-    }
+    const newEvent: Event = {
+      id: crypto.randomUUID(),
+      user_id: user!.uid,
+      ...event,
+    };
+    const updated = [...events, newEvent];
+    saveToLocalStorage(updated);
   };
 
   const handleUpdateEvent = async (id: string, updates: Partial<Event>) => {
-    if (!supabase) return;
-
-    try {
-      const { error } = await supabase
-        .from('events')
-        .update(updates)
-        .eq('id', id);
-
-      if (error) throw error;
-
-      setEvents(events.map(e => e.id === id ? { ...e, ...updates } : e));
-    } catch (error) {
-      console.error('Error updating event:', error);
-      throw error;
-    }
+    const updated = events.map((e) => (e.id === id ? { ...e, ...updates } : e));
+    saveToLocalStorage(updated);
   };
 
   const handleDeleteEvent = async (id: string) => {
-    if (!supabase) return;
-
-    try {
-      const { error } = await supabase
-        .from('events')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
-      setEvents(events.filter(e => e.id !== id));
-    } catch (error) {
-      console.error('Error deleting event:', error);
-      throw error;
-    }
+    const updated = events.filter((e) => e.id !== id);
+    saveToLocalStorage(updated);
   };
 
   const handleSignOut = async () => {
@@ -132,9 +85,7 @@ export default function CalendarPage() {
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">

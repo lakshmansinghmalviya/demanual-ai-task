@@ -1,6 +1,6 @@
-# Calendar App - Demanual AI Assignment
+# Calendar App - Demanual AI Assignment (Task done) // written by lakshmans singh
 
-A modern event management calendar application built with Next.js, Firebase Authentication, and Supabase for data persistence.
+A modern event management calendar application built with Next.js, Firebase Authentication, and localStorage for data persistence.
 
 ## Features
 
@@ -15,7 +15,7 @@ A modern event management calendar application built with Next.js, Firebase Auth
   - Edit and delete existing events
   - Color-coded events
   - Event details with title, description, start/end times
-  - Persistent storage with Supabase
+  - Persistent storage with localStoage
 
 - **Modern UI**
   - Responsive design
@@ -27,7 +27,7 @@ A modern event management calendar application built with Next.js, Firebase Auth
 
 - **Frontend**: Next.js 13 (App Router)
 - **Authentication**: Firebase Authentication
-- **Database**: Supabase (PostgreSQL)
+- **Database**: localStorage (PostgreSQL later)
 - **UI Components**: shadcn/ui, Tailwind CSS
 - **Icons**: Lucide React
 
@@ -37,7 +37,7 @@ A modern event management calendar application built with Next.js, Firebase Auth
 
 1. Node.js 18+ installed
 2. A Firebase project
-3. A Supabase project
+3. A LocalStorage project
 
 ### Firebase Setup
 
@@ -49,12 +49,6 @@ A modern event management calendar application built with Next.js, Firebase Auth
    - Enable Google Sign-In
 4. Get your Firebase configuration from Project Settings > General
 
-### Supabase Setup
-
-The database schema is already created. The `events` table includes:
-- Row Level Security (RLS) enabled
-- Policies for authenticated users to manage their own events
-- Indexes for optimal query performance
 
 ### Environment Variables
 
@@ -86,25 +80,7 @@ npm run dev
 # Build for production
 npm run build
 ```
-
-## Deployment on Vercel
-
-1. Push your code to a GitHub repository
-
-2. Go to [Vercel](https://vercel.com)
-
-3. Click "New Project" and import your repository
-
-4. Configure environment variables:
-   - Add all the variables from your `.env.local` file
-   - Make sure to use the production Firebase configuration
-
-5. Click "Deploy"
-
-6. Once deployed, configure Firebase:
-   - Add your Vercel domain to Firebase authorized domains
-   - Update Google OAuth redirect URIs if using Google Sign-In
-
+ 
 ## Usage
 
 1. **Sign Up**: Create a new account using email/password or Google Sign-In
@@ -128,43 +104,5 @@ npm run build
 │   └── ui/                # shadcn/ui components
 ├── contexts/
 │   └── AuthContext.tsx    # Firebase authentication context
-├── hooks/
-│   └── useSupabase.ts     # Supabase client hook
 ├── lib/
-│   ├── firebase.ts        # Firebase configuration
-│   └── supabase.ts        # Supabase client
-└── README.md
-```
-
-## Security
-
-- All routes are protected with authentication checks
-- Supabase Row Level Security (RLS) ensures users can only access their own events
-- Firebase handles secure authentication and token management
-- Environment variables keep sensitive credentials secure
-
-## Database Schema
-
-### Events Table
-
-```sql
-CREATE TABLE events (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id text NOT NULL,
-  title text NOT NULL,
-  description text DEFAULT '',
-  start_date timestamptz NOT NULL,
-  end_date timestamptz NOT NULL,
-  color text DEFAULT '#3b82f6',
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-```
-
-## Support
-
-For issues or questions, please open an issue on GitHub.
-
-## License
-
-MIT License
+│   ├── firebase.ts        # Firebase configuration 
