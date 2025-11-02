@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
 import { Calendar, Mail } from 'lucide-react';
+import { GoogleIcon } from '../login/page';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -134,7 +135,7 @@ export default function SignupPage() {
             onClick={handleGoogleSignIn}
             disabled={loading}
           >
-            <Mail className="mr-2 h-4 w-4" />
+            <GoogleIcon className="mr-2 h-4 w-4" />
             Google
           </Button>
         </CardContent>
